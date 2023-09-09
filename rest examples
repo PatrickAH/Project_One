@@ -1,3 +1,17 @@
+// curl --location 'http://127.0.0.1:5000/dietitian/createPatient' \
+// --header 'Content-Type: application/json' \
+// --data-raw '{
+//  "first_name" : "Nadim",
+//  "last_name" : "Abou Chrouch",
+//  "gender" : "Male",
+//  "date_of_birth" : "01/04/2000",
+//  "phone" : "063923912",
+//  "email" : "nadim@gmail.com",
+//  "address" : "23 rue chauvelot",
+//  "dietitian_id" : "1",
+//  "pwd" : "nadim"
+//  }'
+
 
 // curl --location 'http://127.0.0.1:5000/patient/addAnthropometry' \
 // --header 'Content-Type: application/json' \
