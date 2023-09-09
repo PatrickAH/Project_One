@@ -1,0 +1,9 @@
+1- CD to project_one
+2- env/bin/activate
+3- pip install Flask
+4- export FLASK_APP=Hello.py
+5- flask run
+
+
+For more info:
+https://phoenixnap.com/kb/install-flask

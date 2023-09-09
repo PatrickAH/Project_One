@@ -1,0 +1,1 @@
+patient_id, to_char(measurement_date, 'DD/MM/YYYY'), medical_diseases, medication, family_history, personal_history, bowel_movement, allergies_intolerences, diastolic_bp, systolic_bp, hdl_cholesterol, ldl_cholesterol, total_cholesterol, triglycerides 
