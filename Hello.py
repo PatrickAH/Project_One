@@ -202,3 +202,7 @@ def getPatients():
     # recepies = json.dumps(recepies);
     cur.close()
     return recepies;
+
+
+    
+app.run()
