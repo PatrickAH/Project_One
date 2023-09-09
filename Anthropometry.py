@@ -66,6 +66,7 @@ class Anthropometry:
         if 'patient_ID' in patient_data:
             if patient_data['patient_ID'] == '':
                 return "patient_ID is missing"
+            
         else:
             return "patient_ID is missing"   
 
