@@ -68,7 +68,7 @@ class Anthropometry:
                 return "patient_ID is missing"
             
         else:
-            return "patient_ID is missing"   
+            return "patient_ID is missng"   
 
         query = 'INSERT INTO anthropometry ' + GlobalFunctions.buildInsertQuery(patient_data) 
         print(query)
