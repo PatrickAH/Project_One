@@ -1,3 +1,20 @@
+// curl --location 'http://127.0.0.1:5000/patient/addAnthropometry' \
+// --header 'Content-Type: application/json' \
+// --data '{
+// "patient_ID" : 2,
+// "measurement_date" : "", 
+// "weight" : 188,
+// "height" : 453,
+// "waist_circumference": 453,
+// "hip_circumference": 453, 
+// "abdominal_skinfold": 453, 
+// "chest_skinfold": 453, 
+// "front_thigh_skinfold": 453, 
+// "midaxillary_skinfold": 453, 
+// "subscapular_skinfold": 453,
+// "suprailiac_skinfold": 453,
+// "triceps_skinfold": 453
+// }'
 
 // curl --location 'http://127.0.0.1:5000/patient/addAnthropometry' \
 // --header 'Content-Type: application/json' \
