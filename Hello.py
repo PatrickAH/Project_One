@@ -8,6 +8,7 @@ from HealthHist import HealthHist
 from LifeStyle import LifeStyle
 from Patient import Patient
 from Anthropometry import Anthropometry
+from MealPrep import MealPrep
 app = Flask(__name__)
 
 
@@ -204,5 +205,32 @@ def getPatients():
     return recepies;
 
 
+
+
+############################################################## JREIJ'S CODE
+
+# @app.post('/mealprep/add')
+# def addMealPrep():
+#     data = request.get_json()
+#     return MealPrep.addMealPrep(json.dumps(data))
+
+
+# Generate Meal Plan
+@app.post('/MealPrep/generateMealPlanBestCombination')
+def generate_meal_plan_one_combinationt():
+    data = request.get_json()
+    return MealPrep.generate_meal_plan_LSM_best_combination(data['dietitian_ID'],  data['protein_goal'], data['carbs_goal'], data['fat_goal'])
+
+@app.post('/dietitian/generateMealPlanLSMSevenCombinations')
+def generate_meal_plan_LSM_seven_best_combinations():
+    data = request.get_json()
+    return MealPrep.generate_meal_plan_LSM_seven_best_combinations(data['dietitian_ID'], data['protein_goal'], data['carbs_goal'], data['fat_goal'])
+
+@app.post('/MealPrep/generateShoppingList')
+def generate_shopping_list_endpoint():
+    data = request.get_json()
+    return MealPrep.generate_shopping_list(data['dietitian_ID'], data['recipee_id'])
     
+
+
 app.run()
