@@ -216,21 +216,27 @@ def getPatients():
 
 
 # Generate Meal Plan
-@app.post('/MealPrep/generateMealPlanBestCombination')
-def generate_meal_plan_one_combinationt():
-    data = request.get_json()
-    return MealPrep.generate_meal_plan_LSM_best_combination(data['dietitian_ID'],  data['protein_goal'], data['carbs_goal'], data['fat_goal'])
 
-@app.post('/dietitian/generateMealPlanLSMSevenCombinations')
-def generate_meal_plan_LSM_seven_best_combinations():
+@app.get('/MealPrep/generateMealPlan')
+def generate_meal_plan_LSM():
     data = request.get_json()
-    return MealPrep.generate_meal_plan_LSM_seven_best_combinations(data['dietitian_ID'], data['protein_goal'], data['carbs_goal'], data['fat_goal'])
+    meal_plan = MealPrep.generate_meal_plan_LSM(data['dietitian_ID'], data['protein_goal'], data['carbs_goal'], data['fat_goal'], data['nbr_days'])
+    return meal_plan
 
-@app.post('/MealPrep/generateShoppingList')
-def generate_shopping_list_endpoint():
+@app.get('/MealPrep/generateMealPlanFixedLunch')
+def generate_meal_plan_fixed_lunch():
+    data = request.get_json()
+    meal_plan = MealPrep.generate_meal_plan_with_fixed_lunch(data['dietitian_ID'], data['protein_goal'], data['carbs_goal'], data['fat_goal'], data['nbr_days'], data['fixed_lunch_id'])
+    return meal_plan
+
+@app.get('/MealPrep/generateShoppingList')
+def generate_shopping_list():
     data = request.get_json()
     return MealPrep.generate_shopping_list(data['dietitian_ID'], data['recipee_id'])
     
-
-
+@app.get('/MealPrep/getPatientMealPlanHistory')
+def get_patient_meal_plan_history():
+    # this funciton was not tested due to lack of data in the meal_prep table 
+    data = request.get_json()
+    return MealPrep.get_patient_meal_plan_history(data['patient_id'], data['dietitian_id'])
 app.run()
