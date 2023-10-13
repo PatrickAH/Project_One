@@ -49,7 +49,7 @@ def activatePatient():
     data = request.get_json()
     return Dietitian.activatePatient(data['patient_ID']);
 
-#END OF DIETITIAN CLASS
+#END OF DIETITIAN CLASS.
 
 
 #PATIENT CLASS
