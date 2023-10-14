@@ -9,6 +9,8 @@ from LifeStyle import LifeStyle
 from Patient import Patient
 from Anthropometry import Anthropometry
 from MealPrep import MealPrep
+from Ingredient import Ingredient
+from Diet import Diet
 app = Flask(__name__)
 
 
@@ -209,20 +211,16 @@ def getPatients():
 
 ############################################################## JREIJ'S CODE
 
-# @app.post('/mealprep/add')
-# def addMealPrep():
-#     data = request.get_json()
-#     return MealPrep.addMealPrep(json.dumps(data))
 
+########################## Generate Meal Plan
 
-# Generate Meal Plan
-
+# should it be get??
 @app.get('/MealPrep/generateMealPlan')
 def generate_meal_plan_LSM():
     data = request.get_json()
     meal_plan = MealPrep.generate_meal_plan_LSM(data['dietitian_ID'], data['protein_goal'], data['carbs_goal'], data['fat_goal'], data['nbr_days'])
     return meal_plan
-
+# should it be get??
 @app.get('/MealPrep/generateMealPlanFixedLunch')
 def generate_meal_plan_fixed_lunch():
     data = request.get_json()
@@ -239,4 +237,128 @@ def get_patient_meal_plan_history():
     # this funciton was not tested due to lack of data in the meal_prep table 
     data = request.get_json()
     return MealPrep.get_patient_meal_plan_history(data['patient_id'], data['dietitian_id'])
+
+
+
+########################## Ingredient Class
+@app.get('/Ingredient/details')
+def getIngredientDetails():
+    data = request.get_json()
+    return Ingredient.fetchIngredientDetails(data['ingredient_id'])
+
+@app.post('/Ingredient/addIngredient')
+def addIngredient():
+    data = request.get_json()
+    return Ingredient.addIngredient(json.dumps(data))    
+           
+@app.put('/Ingredient/updateIngredient')
+def updateIngredient():
+    try:
+        data = request.get_json()
+        ingredient_id = data.get('ingredient_id')
+
+        if not ingredient_id:
+            return jsonify({'status': 'failed', 'message': 'Ingredient ID is required'}), 400
+
+        result = Ingredient.updateIngredient(ingredient_id, data)
+        return jsonify({'status': 'success', 'message': result}), 200
+
+    except ValueError as ve:
+        return jsonify({'status': 'failed', 'message': str(ve)}), 400
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return jsonify({'status': 'failed', 'message': 'Something went wrong'}), 500    
+
+
+########################## Diet Class
+
+@app.post('/Diet/createDiet')
+def createDiet():
+    data = request.get_json()
+    return Diet.createDiet(json.dumps(data))
+  
+
+@app.put('/Diet/udpateDiet')
+def updateDiet():
+    try:
+        data = request.get_json()
+        diet_id = data.get('diet_id')
+
+        if not diet_id:
+            return jsonify({'status': 'failed', 'message': 'Diet ID is required'}), 400
+
+        result = Diet.updateDiet(diet_id, data)
+        return jsonify({'status': 'success', 'message': result}), 200
+
+    except ValueError as ve:
+        return jsonify({'status': 'failed', 'message': str(ve)}), 400
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return jsonify({'status': 'failed', 'message': 'Something went wrong'}), 500     
+
+@app.delete('/Diet/deleteDiet')
+def deleteDiet():
+    try:
+        data = request.get_json()
+        diet_id = data.get('diet_id')
+
+        if not diet_id:
+            return jsonify({'status': 'failed', 'message': 'Diet ID is required'}), 400
+
+        result = Diet.deleteDiet(diet_id)
+        return jsonify({'status': 'success', 'message': result}), 200
+
+    except ValueError as ve:
+        return jsonify({'status': 'failed', 'message': str(ve)}), 400
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return jsonify({'status': 'failed', 'message': 'Something went wrong'}), 500  
+
+@app.get('/Diet/getDietHistory')
+def getDietHistory():
+    try:
+        data = request.get_json()
+        patient_id = data.get('patient_id')
+
+        if not patient_id:
+            return jsonify({'status': 'failed', 'message': 'Patient ID is required'}), 400
+
+        diets = Diet.getDietHistory(patient_id)
+        return jsonify({'status': 'success', 'data': diets}), 200
+
+    except ValueError as ve:
+        return jsonify({'status': 'failed', 'message': str(ve)}), 400
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return jsonify({'status': 'failed', 'message': 'Something went wrong'}), 500
+
+@app.get('/Diet/getLastDiet')
+def getLastDiet():
+    try:
+        data = request.get_json()
+        patient_id = data.get('patient_id')
+
+        if not patient_id:
+            return jsonify({'status': 'failed', 'message': 'Patient ID is required'}), 400
+
+        diet = Diet.getLastDiet(patient_id)
+        
+        if diet is None:
+            return jsonify({'status': 'success', 'message': 'No diets found for the given patient ID'}), 200
+
+        return jsonify({'status': 'success', 'data': diet}), 200
+
+    except ValueError as ve:
+        return jsonify({'status': 'failed', 'message': str(ve)}), 400
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return jsonify({'status': 'failed', 'message': 'Something went wrong'}), 500
+
+
+
+
+
+        
+
+
 app.run()
