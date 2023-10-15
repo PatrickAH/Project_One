@@ -42,7 +42,24 @@ class Ingredient:
         ingredient = cur.fetchone()
 
         if cur.rowcount == 1:
-            ingredient_obj = Ingredient(*ingredient)  # Assuming that the fetched row matches the constructor of Ingredients
+            ingredient_id, name, fat, carbs, protein, calories, grammes, liters, cup, tbsp, tsp, small, medium, large = ingredient
+        
+            ingredient_obj = Ingredient(
+                ingredient_id=ingredient_id,
+                name=name,
+                fat=fat,
+                carbs=carbs,
+                protein=protein,
+                calories=calories,
+                grammes=grammes,
+                liters=liters,
+                cup=cup,
+                tbsp=tbsp,
+                tsp=tsp,
+                small=small,
+                medium=medium,
+                large=large
+            )
             return jsonify(json.loads(ingredient_obj.ingredient_json()))
 
         else:
