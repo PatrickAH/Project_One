@@ -176,34 +176,4 @@ class MealPrep:
         
         return json.dumps({"best_combinations": best_combinations}, default=lambda x: float(x) if isinstance(x, Decimal) else x)
 
-    @staticmethod
-    def get_patient_meal_plan_history(patient_id, dietitian_id):
-        cur = Db_connection.getConnection().cursor()
-        
-        if not patient_id or not dietitian_id:
-            cur.close()
-            return 'Patient ID or Dietitian ID is missing'
-        
-        # Query to fetch all meal plans for the given patient_id and dietitian_id
-        cur.execute("SELECT * FROM meal_prep WHERE patient_id = %s AND dietitian_id = %s", (patient_id, dietitian_id))
-        
-        meal_plans = cur.fetchall()
-        
-        # Convert the result to a list of dictionaries for easier JSON serialization
-        meal_plans_list = []
-        for meal_plan in meal_plans:
-            meal_plan_dict = {
-                'diet_id': meal_plan[0],
-                'recipee_id': meal_plan[1],
-                'Date': meal_plan[2],
-                'meal_id': meal_plan[3],
-                'quantity': meal_plan[4],
-                'patient_id': meal_plan[5],
-                'diet_start_date': meal_plan[6]
-            }
-            meal_plans_list.append(meal_plan_dict)
-        
-        cur.close()
-        
-        return json.dumps({"meal_plans": meal_plans_list})
-        
+    

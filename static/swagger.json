@@ -1,0 +1,274 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "AGOGO API",
+    "description": "API for AGOGO's APP."
+  },
+  "host": "localhost:5000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/dietitian/patients": {
+      "get": {
+        "summary": "Fetch dietitian's patients",
+        "description": "Fetch all patients of a specific dietitian",
+        "parameters": [
+          {
+            "name": "dietitianDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dietitian_ID": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/dietitian/createPatient": {
+      "post": {
+        "summary": "Create a patient",
+        "description": "Create a new patient for a specific dietitian",
+        "parameters": [
+          {
+            "name": "patientDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Patient"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/dietitian/deactivatePatient": {
+      "post": {
+        "summary": "Deactivate a patient",
+        "description": "Deactivate a specific patient",
+        "parameters": [
+          {
+            "name": "patientDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "patient_ID": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/dietitian/activatePatient": {
+      "post": {
+        "summary": "Activate a patient",
+        "description": "Activate a specific patient",
+        "parameters": [
+          {
+            "name": "patientDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "patient_ID": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/MealPrep/generateMealPlan": {
+      "post": {
+        "summary": "Generate meal plan using LSM",
+        "description": "Generates a meal plan based on protein, carbs, and fat goals using Least Squares Method (LSM).",
+        "parameters": [
+          {
+            "name": "mealPlanDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dietitian_ID": {
+                  "type": "string"
+                },
+                "protein_goal": {
+                  "type": "number"
+                },
+                "carbs_goal": {
+                  "type": "number"
+                },
+                "fat_goal": {
+                  "type": "number"
+                },
+                "nbr_days": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/MealPrep/generateMealPlanFixedLunch": {
+      "post": {
+        "summary": "Generate meal plan with fixed lunch",
+        "description": "Generates a meal plan with a fixed lunch ID.",
+        "parameters": [
+          {
+            "name": "mealPlanFixedLunchDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dietitian_ID": {
+                  "type": "string"
+                },
+                "protein_goal": {
+                  "type": "number"
+                },
+                "carbs_goal": {
+                  "type": "number"
+                },
+                "fat_goal": {
+                  "type": "number"
+                },
+                "nbr_days": {
+                  "type": "integer"
+                },
+                "fixed_lunch_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/MealPrep/generateShoppingList": {
+      "post": {
+        "summary": "Generate shopping list",
+        "description": "Generates a shopping list based on the recipe ID.",
+        "parameters": [
+          {
+            "name": "shoppingListDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dietitian_ID": {
+                  "type": "string"
+                },
+                "recipee_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Patient": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "date_of_birth": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "dietitian_id": {
+          "type": "string"
+        },
+        "pwd": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

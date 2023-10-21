@@ -11,6 +11,9 @@ from Anthropometry import Anthropometry
 from MealPrep import MealPrep
 from Ingredient import Ingredient
 from Diet import Diet
+from flask_swagger_ui import get_swaggerui_blueprint
+
+
 app = Flask(__name__)
 
 
@@ -232,11 +235,6 @@ def generate_shopping_list():
     data = request.get_json()
     return MealPrep.generate_shopping_list(data['dietitian_ID'], data['recipee_id'])
     
-@app.get('/MealPrep/getPatientMealPlanHistory')
-def get_patient_meal_plan_history():
-    # this funciton was not tested due to lack of data in the meal_prep table 
-    data = request.get_json()
-    return MealPrep.get_patient_meal_plan_history(data['patient_id'], data['dietitian_id'])
 
 
 
@@ -356,8 +354,23 @@ def getLastDiet():
 
 
 
+########################## Swagger Documentation
 
+# Config Swagger UI
+SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI
+API_URL = '/static/swagger.json'  # Our API url
 
+# Call factory function to create our blueprint
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={  # Swagger UI config overrides
+        'app_name': "AGOGO"
+    }
+)
+
+# Register blueprint at URL
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
         
 
 
