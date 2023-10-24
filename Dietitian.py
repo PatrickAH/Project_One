@@ -34,7 +34,7 @@ class Dietitian:
         cur = Db_connection.getConnection().cursor()
         if d_email == '' or d_pwd == '':
             return('Please enter an Email and Password');
-        cur.execute("select d.dietitian_id, d.first_name , d.family_name , d.email , d.phone_number, to_char(d.date_of_birth, 'DD/MM/YYYY') from dietitian d where d.email = %s and d.pwd = %s",(d_email,d_pwd))
+        cur.execute("select d.dietitian_id, d.first_name , d.family_name , to_char(d.date_of_birth, 'DD/MM/YYYY'), d.phone_number ,d.email from dietitian d where d.email = %s and d.pwd = %s",(d_email,d_pwd))
         dietitian = cur.fetchall()
         if cur.rowcount == 1 :
             print(cur.rowcount)
@@ -81,7 +81,10 @@ class Dietitian:
         print('patient ID is ',patient_ID)
         Db_connection.commit();
         patientData['patient_id'] = str(patient_ID)
-        return json.dumps(patientData)
+        patientR = Patient(str(patient_ID),patientData['first_name'],patientData['last_name'], patientData['gender'],patientData['date_of_birth'],
+                          patientData['phone'], patientData['email'], patientData['address'], patientData['dietitian_id'],'ACTIVE')
+        
+        return patientR.Patient_json();
     
     @staticmethod
     def deactivatePatient(patient_ID):

@@ -41,7 +41,7 @@ class HealthHist:
         
 
     @staticmethod
-    def fetchPatientLastBC(p_ID):
+    def fetchPatientLastHealthHist(p_ID):
         if p_ID == '' :
             return('Please select a patient to display');
         healthhists = HealthHist.fetchPatientHealthHistList(p_ID);
