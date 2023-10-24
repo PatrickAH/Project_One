@@ -284,7 +284,7 @@
                 }
               }
             }
-          },
+          }
         
         ],
         "responses": {
@@ -877,7 +877,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/BodyComp"
+              "$ref": "#/definitions/HealthHist"
             }
           },
           "400": {
@@ -1043,20 +1043,16 @@
                   "$ref": "#/definitions/Patient"
                 },
                 "p_Anthropometry": {
-                  "type": "object",
-                  "description": "Last Anthropometry data of the patient."
+                  "$ref": "#/definitions/Anthropometry"
                 },
                 "p_BodyComp": {
-                  "type": "object",
-                  "description": "Last Body Composition data of the patient."
+                  "$ref": "#/definitions/BodyComp"
                 },
                 "p_HealthHist": {
-                  "type": "object",
-                  "description": "Last Health History data of the patient."
+                  "$ref": "#/definitions/HealthHist"
                 },
                 "p_LifeStyle": {
-                  "type": "object",
-                  "description": "Last LifeStyle data of the patient."
+                  "$ref": "#/definitions/LifeStyle"
                 }
               }
             }
@@ -1552,7 +1548,7 @@
           "description": "Address of the patient."
         },
         "dietitian_id": {
-          "type": "string",
+          "type": "number",
           "description": "ID of the dietitian associated with the patient."
         },
         "status": {
@@ -1628,15 +1624,6 @@
         "status"
       ]
     },
- 
- 
- 
- 
- 
- 
- 
- 
- 
     "Dietitian": {
       "type": "object",
       "properties": {
@@ -1664,9 +1651,9 @@
         "email": {
           "type": "string",
           "description": "Email address of the Dietitian."
-        },
+        }
              }
-    },
+    }
 
     
   } 
