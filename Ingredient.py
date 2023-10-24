@@ -38,7 +38,7 @@ class Ingredient:
         if not ingredient_id:
             return('Please enter an Ingredient ID')
 
-        cur.execute("SELECT * FROM public.ingredient WHERE ingredient_id = %s", (ingredient_id,))
+        cur.execute("SELECT ingredient_id,name, fat, carbs, protein, calories, grammes, liters, cup, tbsp, tsp, small, medium, large FROM public.ingredient WHERE ingredient_id = %s", (ingredient_id))
         ingredient = cur.fetchone()
 
         if cur.rowcount == 1:
@@ -62,7 +62,7 @@ class Ingredient:
                                        ingredientData["tbsp"], ingredientData["tsp"], ingredientData["small"], ingredientData["medium"], ingredientData["large"]))
             
             # Commit the transaction
-            Db_connection.getConnection().commit()
+            Db_connection.commit()
             
             # Fetch the automatically generated ingredient_id
             ingredient_id = cur.fetchone()[0]
@@ -92,7 +92,7 @@ class Ingredient:
                                        updated_data["small"], updated_data["medium"], updated_data["large"], ingredient_id))
             
             # Commit the transaction and close the cursor
-            Db_connection.getConnection().commit()
+            Db_connection.commit()
             cur.close()
             
             if cur.rowcount:
