@@ -206,7 +206,7 @@
           "200": {
             "description": "Successful operation",
             "schema": {
-              "type": "object"
+              "$ref": "#/definitions/GenMealPrep"
             }
           },
           "400": {
@@ -254,7 +254,7 @@
           "200": {
             "description": "Successful operation",
             "schema": {
-              "type": "object"
+              "$ref": "#/definitions/GenMealPrep"
             }
           },
           "400": {
@@ -291,11 +291,51 @@
           "200": {
             "description": "Successful operation",
             "schema": {
-              "type": "object"
+              "type": "array",
+              "items":{
+                "$ref": "#/definitions/shoppingListItem"
+              }
             }
           },
           "400": {
             "description": "Invalid input"
+          }
+        }
+      }
+    }, 
+    "/Recipee/getRecipee": {
+      "get": {
+        "tags": ["Recipee API"],
+        "summary": "Fetch Recipee details",
+        "description": "Fetch details of a Recipee by its ID.",
+        "parameters": [
+          {
+            "name": "recipee_id",
+            "in": "body",
+            "required": true,
+            "description": "ID of the recipee to be fetched.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ingredient_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Recipee"
+            }
+          },
+          "400": {
+            "description": "recipee ID is required or other bad request."
+          },
+          "404": {
+            "description": "recipee not found."
           }
         }
       }
@@ -1653,9 +1693,119 @@
           "description": "Email address of the Dietitian."
         }
              }
+    },
+    "Recipee":{
+      "type": "object",
+      "properties": {
+        "recipee_id": {
+          "type": "number",
+          "description": "ID of the recipee."
+        },
+        "name": {
+          "type": "string",
+          "description": "recipee name."
+        },
+        "description": {
+          "type": "string",
+          "description": "recipee description."
+        },
+        "meal_type": {
+          "type": "string",
+          "description": "meal_type: Breakfast, Lunch, Dinner."
+        },
+        "calories": {
+          "type": "number",
+          "description": "calories of the recipee."
+        },
+        "fat": {
+          "type": "number",
+          "description": "fat of the recipee."
+        },
+        "protein": {
+          "type": "number",
+          "description": "protein of the recipee."
+        },
+        "servings": {
+          "type": "number",
+          "description": "servings of the recipee."
+        },
+        "carbs": {
+          "type": "number",
+          "description": "carbs of the recipee."
+        }
+        
     }
-
-    
-  } 
+  },
+  "Combination":{
+    "type": "object",
+    "properties": {
+      "breakfast": {
+          "$ref": "#/definitions/Recipee"
+      },
+      "lunch": {
+          "$ref": "#/definitions/Recipee"
+      },
+      "dinner": {
+          "$ref": "#/definitions/Recipee"
+      },
+      "score": {
+        "type": "number",
+        "description": "score of the combination."
+      }
   }
+}
+  ,
+  "GenMealPrep":{
+    "type": "object",
+    "properties": {
+      "best_combinations": {
+        "type": "array",
+        "description": "Array of Breakfast - Lunch - Dinner Combinations.",
+        "items":{
+                "$ref": "#/definitions/Combination"
+              }
+            }
+          }
+        },
+    "shoppingListItem":{
+          "type": "object",
+          "properties": {
+            "ingredient_id": {
+              "type": "number",
+              "description": "ID of the ingredient."
+            },
+            "name": {
+              "type": "string",
+              "description": "ingredient name."
+            },
+            "grammes": {
+              "type": "number"
+             },
+             "liters": {
+              "type": "number"
+            },
+            "cup": {
+             "type": "number"
+            },
+            "tbsp": {
+              "type": "number"
+            },
+            "tsp": {
+              "type": "number"
+            },
+            "small": {
+             "type": "number"
+            },
+            "medium": {
+              "type": "number"
+            },
+            "large": {
+              "type": "number"
+            }
 
+
+
+        }
+      }
+      }
+}
