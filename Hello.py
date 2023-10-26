@@ -6,6 +6,7 @@ from Db_connection import Db_connection
 from Dietitian import Dietitian
 from HealthHist import HealthHist
 from LifeStyle import LifeStyle
+from MealPrepItem import MealPrepItem
 from Patient import Patient
 from Anthropometry import Anthropometry
 from MealPrep import MealPrep
@@ -241,7 +242,15 @@ def generate_shopping_list():
     return MealPrep.generate_shopping_list(data['dietitian_ID'], data['recipee_id'])
     
 
+@app.post('/MealPrep/insertMealPlanItem')
+def insertMealPlan():
+    data = request.get_json()
+    return MealPrepItem.addMealPrepItem(json.dumps(data))
 
+@app.post('/MealPrep/insertBulkMPItems')
+def insertBulkMPItems():
+    data = request.get_json()
+    return MealPrepItem.addbulkMealPrepItems(json.dumps(data))
 
 ########################## Ingredient Class
 @app.get('/Ingredient/details')

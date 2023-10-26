@@ -31,7 +31,8 @@ class Diet:
         
         try:
             query = '''INSERT INTO public.diet (patient_id, start_date, end_date, calories_intake, fat_intake, carbs_intake, protein_intake, meals_nbr) 
-                       VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING diet_id'''
+                       VALUES (%s, TO_DATE(%s,'DD/MM/YYYY'), TO_DATE(%s,'DD/MM/YYYY'), %s, %s, %s, %s, %s) RETURNING diet_id'''
+            print(query)
             cur.execute(query, (dietData["patient_id"], dietData["start_date"], dietData["end_date"], dietData["calories_intake"], 
                                 dietData["fat_intake"], dietData["carbs_intake"], dietData["protein_intake"], dietData["meals_nbr"]))
             diet_id = cur.fetchone()[0]

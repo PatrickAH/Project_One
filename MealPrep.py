@@ -11,6 +11,7 @@ import json
 import itertools
 import heapq
 from decimal import Decimal
+from MpCombination import MpCombination
 
 from Recipee import Recipee
 
@@ -33,24 +34,6 @@ class MealPrep:
     def MealPrep_json(self):
         return json.dumps(vars(self), default=str)
     
-    
-    @staticmethod
-    def create_combination(all_combinations,breakfast,lunch,dinner,breakfast_servings,lunch_servings,dinner_servings,score):
-        #recipee_id, name, description, meal_type, calories, fat, protein, servings, carbs
-        breakfast_obj = Recipee(breakfast[0],breakfast[6],breakfast[7],breakfast[4],breakfast[8],breakfast[3],breakfast[1],breakfast_servings,breakfast[2]);
-        lunch_obj = Recipee(lunch[0],lunch[6],lunch[7],lunch[4],lunch[8],lunch[3],lunch[1],lunch_servings,lunch[2]);
-        dinner_obj = Recipee(dinner[0],dinner[6],dinner[7],dinner[4],dinner[8],dinner[3],dinner[1],dinner_servings,dinner[2]);
-
-        combination = {
-                        "breakfast": breakfast_obj.recipee_json(),
-                        "lunch": lunch_obj.recipee_json(),
-                        "dinner": dinner_obj.recipee_json(),
-                        "score": score
-                                }
-        all_combinations.append(combination)
-        return all_combinations;
-
-
         
     @staticmethod
     def generate_shopping_list(dietitian_ID, recipee_id):
@@ -116,13 +99,16 @@ class MealPrep:
                                 fat_meals = (breakfast[3] * breakfast_servings + 
                                              lunch[3] * lunch_servings + 
                                              dinner[3] * dinner_servings)
-                                
                                 # Calculate LSM score
                                 score = (4*(protein_goal - protein_meals)**2 + 
                                          (carbs_goal - carbs_meals)**2 + 
                                          (fat_goal - fat_meals)**2)
-                                all_combinations = MealPrep.create_combination(all_combinations,breakfast,lunch,dinner,breakfast_servings,lunch_servings,dinner_servings,score);
-        
+                                MpCombination.add_combination_lst(all_combinations,breakfast,lunch,dinner,breakfast_servings,lunch_servings,dinner_servings,score)
+                                # combination = MpCombination.create_combination(breakfast,lunch,dinner,breakfast_servings,lunch_servings,dinner_servings,score)
+                                # combJson = combination.mpCombination_json()
+                                # print(combJson)
+                                # all_combinations = all_combinations.append(combJson);
+   
         # Sort the combinations based on LSM score in ascending order
         all_combinations.sort(key=lambda x: x["score"])
         best_combinations = all_combinations[:nbr_days]
@@ -174,6 +160,7 @@ class MealPrep:
                             score = (4*(protein_goal - protein_meals)**2 + 
                                      (carbs_goal - carbs_meals)**2 + 
                                      (fat_goal - fat_meals)**2)
+                            MpCombination.add_combination_lst(all_combinations,breakfast,fixed_lunch,dinner,breakfast_servings,lunch_servings,dinner_servings,score)
                             
                             # # Add the combination and its score to the list
                             # combination = {
@@ -187,7 +174,8 @@ class MealPrep:
                             # }
                             
                             # all_combinations.append(combination)
-                            all_combinations = MealPrep.create_combination(all_combinations,breakfast,fixed_lunch,dinner,breakfast_servings,lunch_servings,dinner_servings,score);
+                            # all_combinations = MpCombination.create_combination(all_combinations,breakfast,fixed_lunch,dinner,breakfast_servings,lunch_servings,dinner_servings,score);
+                            
         
         # Sort the combinations based on LSM score in ascending order
         all_combinations.sort(key=lambda x: x["score"])
@@ -197,3 +185,4 @@ class MealPrep:
         return json.dumps({"best_combinations": best_combinations}, default=lambda x: float(x) if isinstance(x, Decimal) else x)
 
     
+
