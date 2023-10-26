@@ -76,7 +76,9 @@ class MealPrep:
         # Fetch all meals
         cur.execute("SELECT recipee_id, protein, carbs, fat, meal_type, servings, name, description,calories FROM recipee")
         meals = cur.fetchall()
-        
+        breakfast_weight = 1
+        lunch_weight = 1
+        dinner_weight = 1
         breakfasts = [meal for meal in meals if meal[4] == 'Breakfast']
         lunches = [meal for meal in meals if meal[4] == 'Lunch']
         dinners = [meal for meal in meals if meal[4] == 'Dinner']
@@ -90,15 +92,16 @@ class MealPrep:
                     for breakfast_servings in range(1, int(breakfast[5]) + 1):  # Assuming servings is an integer
                         for lunch_servings in range(1, int(lunch[5]) + 1):
                             for dinner_servings in range(1, int(dinner[5]) + 1):
-                                protein_meals = (breakfast[1] * breakfast_servings + 
-                                                 lunch[1] * lunch_servings + 
-                                                 dinner[1] * dinner_servings)
-                                carbs_meals = (breakfast[2] * breakfast_servings + 
-                                               lunch[2] * lunch_servings + 
-                                               dinner[2] * dinner_servings)
-                                fat_meals = (breakfast[3] * breakfast_servings + 
-                                             lunch[3] * lunch_servings + 
-                                             dinner[3] * dinner_servings)
+                                protein_meals = (breakfast[1] * breakfast_servings * breakfast_weight + 
+                                                 lunch[1] * lunch_servings * lunch_weight+ 
+                                                 dinner[1] * dinner_servings * dinner_weight)
+                                carbs_meals = (breakfast[2] * breakfast_servings * breakfast_weight + 
+                                               lunch[2] * lunch_servings * lunch_weight+ 
+                                               dinner[2] * dinner_servings * dinner_weight)
+                                fat_meals = (breakfast[3] * breakfast_servings * breakfast_weight + 
+                                             lunch[3] * lunch_servings * lunch_weight + 
+                                             dinner[3] * dinner_servings * dinner_weight)
+                                
                                 # Calculate LSM score
                                 score = (4*(protein_goal - protein_meals)**2 + 
                                          (carbs_goal - carbs_meals)**2 + 
