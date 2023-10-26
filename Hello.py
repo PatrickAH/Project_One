@@ -14,6 +14,8 @@ from Diet import Diet
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS
 
+from Recipee import Recipee
+
 app = Flask(__name__)
 
 
@@ -354,6 +356,36 @@ def getLastDiet():
     except Exception as e:
         app.logger.error(f"Exception occurred: {e}")
         return jsonify({'status': 'failed', 'message': 'Something went wrong'}), 500
+
+
+
+############################ Recipee Class
+
+@app.get('/Recipee/getRecipee')
+def getRecipeeByID():
+    try:
+        data = request.get_json()
+        recipee_id = data.get('recipee_id')
+
+        if not recipee_id:
+            return jsonify({'status': 'failed', 'message': 'recipee_id is required'}), 400
+
+        recipee = Recipee.getRecipee(recipee_id)
+        
+        if recipee is None:
+            return jsonify({'status': 'success', 'message': 'No recipees found for the given recipee ID'}), 200
+
+        return recipee, 200
+
+    except ValueError as ve:
+        return jsonify({'status': 'failed', 'message': str(ve)}), 400
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return jsonify({'status': 'failed', 'message': 'Something went wrong'}), 500
+
+
+
+
 
 
 

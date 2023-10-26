@@ -61,14 +61,14 @@ class Patient:
             return patientR.Patient_json();
         else :
             cur.close;
-            return('The email or password is incorrect');
+            return('The patient ID is incorrect');
 
     @staticmethod
     def fetchPatientAllInfo(p_ID):
         p_stat_info = Patient.fetchPatientStaticInfo(p_ID);
         p_Anthropometry = Anthropometry.fetchPatientLastAnth(p_ID);
         p_BodyComp = BodyComp.fetchPatientLastBC(p_ID)
-        p_HealthHist = HealthHist.fetchPatientLastBC(p_ID)
+        p_HealthHist = HealthHist.fetchPatientLastHealthHist(p_ID)
         p_LifeStyle = LifeStyle.fetchPatientLastLifeStyle(p_ID)
         p_data = {}
         p_data['p_stat_info'] = p_stat_info
