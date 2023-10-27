@@ -7,6 +7,7 @@ from Dietitian import Dietitian
 from HealthHist import HealthHist
 from LifeStyle import LifeStyle
 from MealPrepItem import MealPrepItem
+from MpCombination import MpCombination
 from Patient import Patient
 from Anthropometry import Anthropometry
 from MealPrep import MealPrep
@@ -252,6 +253,12 @@ def insertBulkMPItems():
     data = request.get_json()
     return MealPrepItem.addbulkMealPrepItems(json.dumps(data))
 
+@app.get('/MealPrep/getCombination')
+def getCombination():
+    data = request.get_json()
+    mpComb = MpCombination.getCombination(data['diet_id'], data['patient_id'],data['combination_id'])
+    return mpComb.mpCombination_json();
+
 ########################## Ingredient Class
 @app.get('/Ingredient/details')
 def getIngredientDetails():
@@ -366,7 +373,11 @@ def getLastDiet():
         app.logger.error(f"Exception occurred: {e}")
         return jsonify({'status': 'failed', 'message': 'Something went wrong'}), 500
 
-
+@app.get('/diet/getDietCombinations')
+def getDietCombinations():
+    data = request.get_json()
+    mpCombs = Diet.getDietCombinations(data['diet_id'], data['patient_id'])
+    return mpCombs;
 
 ############################ Recipee Class
 

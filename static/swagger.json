@@ -303,6 +303,140 @@
         }
       }
     }, 
+    "/MealPrep/insertMealPlanItem": {
+      "post": {
+        "tags": ["Meal Plan Item API"],
+        "summary": "Adds a Meal Plan Item to the DB",
+        "description": "Adds a Meal Plan Item to the DB",
+        "parameters": [
+          {
+            "name": "mealPlanDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+                "$ref": "#/definitions/MealPrepItem"
+              }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "meal prep item added successfully"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    }, 
+    "/MealPrep/insertBulkMPItems": {
+      "post": {
+        "tags": ["Meal Plan Item API"],
+        "summary": "Adds several Meal Plan Items to the DB in one call",
+        "description": "Adds several Meal Plan Items to the DB in one call",
+        "parameters": [
+          {
+            "name": "insert_bulk_MP_Items",
+            "in": "body",
+            "required": true,
+            "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/MealPrepItem"
+                }
+              }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "meal prep items added successfully"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    }, 
+    "/MealPrep/getCombination": {
+      "get": {
+        "tags": ["Meal Plan Item API"],
+        "summary": "gets a specific saved combination based on the patient, diet, and combination ID",
+        "description": "gets a specific saved combination based on the patient, diet, and combination ID",
+        "parameters": [
+          {
+            "name": "mealPlanDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "diet_id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "patient_id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "combination_id": {
+                  "type": "integer",
+                  "format": "int64"
+                }}
+              }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Combination"
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/diet/getDietCombinations": {
+      "get": {
+        "tags": ["Meal Plan Item API"],
+        "summary": "gets a all saved  combinations based on the patient and diet",
+        "description": "gets a all saved  combinations based on the patient and diet",
+        "parameters": [
+          {
+            "name": "mealPlanDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "diet_id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "patient_id": {
+                  "type": "integer",
+                  "format": "int64"
+                }}
+              }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+                "type": "array",
+                "items": {
+                "$ref": "#/definitions/Combination"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
     "/Recipee/getRecipee": {
       "get": {
         "tags": ["Recipee API"],
@@ -1753,8 +1887,46 @@
         "description": "score of the combination."
       }
   }
-}
-  ,
+}  ,
+"MealPrepItem": {
+  "type": "object",
+  "properties": {
+    "diet_id": {
+      "type": "number"
+    },
+    "recipee_id": {
+      "type": "number"
+    },
+    "meal_type": {
+      "type": "string"
+    },
+    "patient_id": {
+      "type": "number"
+    },
+    "diet_start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "combinationnbr": {
+      "type": "number"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "servings": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "diet_id",
+    "recipee_id",
+    "meal_type",
+    "patient_id",
+    "diet_start_date",
+    "combinationnbr"
+  ]
+},
   "GenMealPrep":{
     "type": "object",
     "properties": {
@@ -1802,9 +1974,6 @@
             "large": {
               "type": "number"
             }
-
-
-
         }
       }
       }

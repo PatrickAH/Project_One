@@ -63,3 +63,35 @@ class MpCombination:
 
         comb = MpCombination(breakfast,lunch, dinner,score)
         return comb.mpCombination_json()
+    
+
+    @staticmethod
+    def getCombination(diet_id,patient_id,combination_id):
+        cur = Db_connection.getConnection().cursor()
+        try:
+            query = '''select r.recipee_id, r.name, r.description, LOWER(r.meal_type), r.calories, r.fat, r.protein, r.servings, r.carbs
+                        from meal_prep mp ,recipee r 
+                        where mp.recipee_id = r.recipee_id 
+                        and mp.patient_id =%s
+                        and diet_id = %s
+                        and combinationnbr =%s'''
+            cur.execute(query, (patient_id,diet_id,combination_id))
+            records = cur.fetchall()
+    
+            if records is None:
+                return None
+            for record in records:
+                if record[3]=='breakfast':
+                    breakfast = Recipee(record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7],record[8]);
+                if record[3]=='lunch':
+                    lunch = Recipee(record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7],record[8]);
+                if record[3]=='dinner':
+                    dinner = Recipee(record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7],record[8]); 
+            
+            return MpCombination(breakfast,lunch,dinner,0)
+        except psycopg2.Error as e:
+            return f"Database error: {e}"
+        finally:
+            if cur:
+                cur.close()
+    
