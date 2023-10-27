@@ -11,6 +11,9 @@ import json
 import itertools
 import heapq
 from decimal import Decimal
+from MpCombination import MpCombination
+
+from Recipee import Recipee
 
 def handle_decimal(obj):
     if isinstance(obj, Decimal):
@@ -31,7 +34,6 @@ class MealPrep:
     def MealPrep_json(self):
         return json.dumps(vars(self), default=str)
     
-    
         
     @staticmethod
     def generate_shopping_list(dietitian_ID, recipee_id):
@@ -40,15 +42,27 @@ class MealPrep:
             cur.close()
             return 'Dietitian ID is missing'
         
-        query = f"""SELECT ingredient_id, grammes, litters, cup, tbsp, tsp, small, medium, "Large" 
-                    FROM recipeingredients WHERE recipee_id = {recipee_id}"""
+        query = f"""SELECT ri.ingredient_id,i."name", ri.grammes, ri.litters, ri.cup, ri.tbsp, ri.tsp, ri.small, ri.medium, ri.large 
+                    FROM recipeingredients ri,ingredient i WHERE ri.recipee_id = {recipee_id} and i.ingredient_id =ri.ingredient_id"""
         cur.execute(query)
         
         ingredients = cur.fetchall()
-        shopping_list = [ingredient[0] for ingredient in ingredients]  
-        
+        # shopping_list = [ingredient[0] for ingredient in ingredients]  
+        shopping_List = []
+        for ingr in ingredients:
+            shopping_List.append({"ingredient_id":ingr[0],
+                                  "name":ingr[1],
+                                  "grammes":ingr[2],
+                                  "litters":ingr[3],
+                                  "cup":ingr[4],
+                                  "tbsp":ingr[5],
+                                  "tsp":ingr[6],
+                                  "small":ingr[7],
+                                  "medium":ingr[8],
+                                  "large":ingr[9] })
+
         cur.close()
-        return json.dumps({"shopping_list": shopping_list})
+        return json.dumps(shopping_List)
     
     
     
@@ -60,9 +74,11 @@ class MealPrep:
             return 'Dietitian ID is missing'
         
         # Fetch all meals
-        cur.execute("SELECT recipee_id, protein, carbs, fat, meal_type, servings FROM recipee")
+        cur.execute("SELECT recipee_id, protein, carbs, fat, meal_type, servings, name, description,calories FROM recipee")
         meals = cur.fetchall()
-        
+        breakfast_weight = 1
+        lunch_weight = 1
+        dinner_weight = 1
         breakfasts = [meal for meal in meals if meal[4] == 'Breakfast']
         lunches = [meal for meal in meals if meal[4] == 'Lunch']
         dinners = [meal for meal in meals if meal[4] == 'Dinner']
@@ -76,42 +92,34 @@ class MealPrep:
                     for breakfast_servings in range(1, int(breakfast[5]) + 1):  # Assuming servings is an integer
                         for lunch_servings in range(1, int(lunch[5]) + 1):
                             for dinner_servings in range(1, int(dinner[5]) + 1):
-                                protein_meals = (breakfast[1] * breakfast_servings + 
-                                                 lunch[1] * lunch_servings + 
-                                                 dinner[1] * dinner_servings)
-                                carbs_meals = (breakfast[2] * breakfast_servings + 
-                                               lunch[2] * lunch_servings + 
-                                               dinner[2] * dinner_servings)
-                                fat_meals = (breakfast[3] * breakfast_servings + 
-                                             lunch[3] * lunch_servings + 
-                                             dinner[3] * dinner_servings)
+                                protein_meals = (breakfast[1] * breakfast_servings * breakfast_weight + 
+                                                 lunch[1] * lunch_servings * lunch_weight+ 
+                                                 dinner[1] * dinner_servings * dinner_weight)
+                                carbs_meals = (breakfast[2] * breakfast_servings * breakfast_weight + 
+                                               lunch[2] * lunch_servings * lunch_weight+ 
+                                               dinner[2] * dinner_servings * dinner_weight)
+                                fat_meals = (breakfast[3] * breakfast_servings * breakfast_weight + 
+                                             lunch[3] * lunch_servings * lunch_weight + 
+                                             dinner[3] * dinner_servings * dinner_weight)
                                 
                                 # Calculate LSM score
                                 score = (4*(protein_goal - protein_meals)**2 + 
                                          (carbs_goal - carbs_meals)**2 + 
                                          (fat_goal - fat_meals)**2)
-                                
-                                # Add the combination and its score to the heap
-                                combination = {
-                                    "breakfast": breakfast[0:4],
-                                    "lunch": lunch[0:4],
-                                    "dinner": dinner[0:4],
-                                    "breakfast_servings": breakfast_servings,
-                                    "lunch_servings": lunch_servings,
-                                    "dinner_servings": dinner_servings,
-                                    "score": score,
-                                }
-                                
-                                all_combinations.append(combination)
-        
+                                MpCombination.add_combination_lst(all_combinations,breakfast,lunch,dinner,breakfast_servings,lunch_servings,dinner_servings,score)
+                                # combination = MpCombination.create_combination(breakfast,lunch,dinner,breakfast_servings,lunch_servings,dinner_servings,score)
+                                # combJson = combination.mpCombination_json()
+                                # print(combJson)
+                                # all_combinations = all_combinations.append(combJson);
+   
         # Sort the combinations based on LSM score in ascending order
         all_combinations.sort(key=lambda x: x["score"])
         best_combinations = all_combinations[:nbr_days]
         cur.close()
-        
-
         return json.dumps({"best_combinations": best_combinations}, default=lambda x: float(x) if isinstance(x, Decimal) else x)
     
+
+
     
     def generate_meal_plan_with_fixed_lunch(dietitian_ID, protein_goal, carbs_goal, fat_goal, nbr_days, fixed_lunch_id):
         cur = Db_connection.getConnection().cursor()
@@ -120,7 +128,7 @@ class MealPrep:
             return 'Dietitian ID is missing'
         
         # Fetch all meals
-        cur.execute("SELECT recipee_id, protein, carbs, fat, meal_type, servings FROM recipee")
+        cur.execute("SELECT recipee_id, protein, carbs, fat, meal_type, servings, name, description,calories FROM recipee")
         meals = cur.fetchall()
         
         breakfasts = [meal for meal in meals if meal[4] == 'Breakfast']
@@ -155,19 +163,22 @@ class MealPrep:
                             score = (4*(protein_goal - protein_meals)**2 + 
                                      (carbs_goal - carbs_meals)**2 + 
                                      (fat_goal - fat_meals)**2)
+                            MpCombination.add_combination_lst(all_combinations,breakfast,fixed_lunch,dinner,breakfast_servings,lunch_servings,dinner_servings,score)
                             
-                            # Add the combination and its score to the list
-                            combination = {
-                                "breakfast": breakfast[0:4],
-                                "lunch": fixed_lunch[0:4],
-                                "dinner": dinner[0:4],
-                                "breakfast_servings": breakfast_servings,
-                                "lunch_servings": lunch_servings,
-                                "dinner_servings": dinner_servings,
-                                "score": score,
-                            }
+                            # # Add the combination and its score to the list
+                            # combination = {
+                            #     "breakfast": breakfast[0:4],
+                            #     "lunch": fixed_lunch[0:4],
+                            #     "dinner": dinner[0:4],
+                            #     "breakfast_servings": breakfast_servings,
+                            #     "lunch_servings": lunch_servings,
+                            #     "dinner_servings": dinner_servings,
+                            #     "score": score,
+                            # }
                             
-                            all_combinations.append(combination)
+                            # all_combinations.append(combination)
+                            # all_combinations = MpCombination.create_combination(all_combinations,breakfast,fixed_lunch,dinner,breakfast_servings,lunch_servings,dinner_servings,score);
+                            
         
         # Sort the combinations based on LSM score in ascending order
         all_combinations.sort(key=lambda x: x["score"])
@@ -176,34 +187,5 @@ class MealPrep:
         
         return json.dumps({"best_combinations": best_combinations}, default=lambda x: float(x) if isinstance(x, Decimal) else x)
 
-    @staticmethod
-    def get_patient_meal_plan_history(patient_id, dietitian_id):
-        cur = Db_connection.getConnection().cursor()
-        
-        if not patient_id or not dietitian_id:
-            cur.close()
-            return 'Patient ID or Dietitian ID is missing'
-        
-        # Query to fetch all meal plans for the given patient_id and dietitian_id
-        cur.execute("SELECT * FROM meal_prep WHERE patient_id = %s AND dietitian_id = %s", (patient_id, dietitian_id))
-        
-        meal_plans = cur.fetchall()
-        
-        # Convert the result to a list of dictionaries for easier JSON serialization
-        meal_plans_list = []
-        for meal_plan in meal_plans:
-            meal_plan_dict = {
-                'diet_id': meal_plan[0],
-                'recipee_id': meal_plan[1],
-                'Date': meal_plan[2],
-                'meal_id': meal_plan[3],
-                'quantity': meal_plan[4],
-                'patient_id': meal_plan[5],
-                'diet_start_date': meal_plan[6]
-            }
-            meal_plans_list.append(meal_plan_dict)
-        
-        cur.close()
-        
-        return json.dumps({"meal_plans": meal_plans_list})
-        
+    
+

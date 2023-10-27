@@ -6,11 +6,18 @@ from Db_connection import Db_connection
 from Dietitian import Dietitian
 from HealthHist import HealthHist
 from LifeStyle import LifeStyle
+from MealPrepItem import MealPrepItem
+from MpCombination import MpCombination
 from Patient import Patient
 from Anthropometry import Anthropometry
 from MealPrep import MealPrep
 from Ingredient import Ingredient
 from Diet import Diet
+from flask_swagger_ui import get_swaggerui_blueprint
+from flask_cors import CORS
+
+from Recipee import Recipee
+
 app = Flask(__name__)
 
 
@@ -89,6 +96,11 @@ def getPatientAnthropometryHist():
   #  except:
    #     raise BadRequest('Something went wrong, please contact the system provider');
 
+@app.post('/patient/addAnthropometry')
+def addAnthropometry():
+    data = request.get_json()
+    return Anthropometry.addAnthropometry(json.dumps(data))
+
 @app.get('/patient/LastBodyComp')
 def getPatientLastBodyComp():
     #try:
@@ -96,6 +108,7 @@ def getPatientLastBodyComp():
         return BodyComp.fetchPatientLastBC(data['patient_ID']);
   #  except:
    #     raise BadRequest('Something went wrong, please contact the system provider');
+
 
 
 @app.get('/patient/BodyCompHistory')
@@ -110,7 +123,7 @@ def getPatientBodyCompHist():
 def getPatientLastHealthHistory():
     #try:
         data = request.get_json()
-        return HealthHist.fetchPatientLastBC(data['patient_ID']);
+        return HealthHist.fetchPatientLastHealthHist(data['patient_ID']);
   #  except:
    #     raise BadRequest('Something went wrong, please contact the system provider');
 
@@ -160,10 +173,7 @@ def updatePatientStatic():
     data = request.get_json()
     return Patient.updatePatientStatInfo(json.dumps(data))
 
-@app.post('/patient/addAnthropometry')
-def addAnthropometry():
-    data = request.get_json()
-    return Anthropometry.addAnthropometry(json.dumps(data))
+
 
 @app.post('/patient/addBodyComp')
 def addBodyComp():
@@ -187,24 +197,24 @@ def addLifeStyle():
 
 
 
-@app.get('/recepies')
-def getPatients():
-    conn = Db_connection.getConnection()
-    cur = conn.cursor()
-    cur.execute('select r."Name" as recipee ,i."name" as ingredient, ri.grammes ,ri.litters, ri.cup ,ri.tbsp ,ri.small ,ri.medium ,ri."Large" from recipeingredients ri,recipee r, ingredient i where  r.recipee_id =ri.recipee_id and ri.ingredient_id = i.ingredient_id;')
-    recepies = cur.fetchall()
-    #print(recepies);
-    # recepies = json.dumps(recepies)
-    # print("_____________________________________________________");
-    # print("______________________________________________________");
-    # print(recepies);
-    recepies = jsonify(recepies)
-    # print("_____________________________________________________");
-    # print("______________________________________________________");
-    # print(recepies);
-    # recepies = json.dumps(recepies);
-    cur.close()
-    return recepies;
+# @app.get('/recepies')
+# def getPatients():
+#     conn = Db_connection.getConnection()
+#     cur = conn.cursor()
+#     cur.execute('select r."Name" as recipee ,i."name" as ingredient, ri.grammes ,ri.litters, ri.cup ,ri.tbsp ,ri.small ,ri.medium ,ri."Large" from recipeingredients ri,recipee r, ingredient i where  r.recipee_id =ri.recipee_id and ri.ingredient_id = i.ingredient_id;')
+#     recepies = cur.fetchall()
+#     #print(recepies);
+#     # recepies = json.dumps(recepies)
+#     # print("_____________________________________________________");
+#     # print("______________________________________________________");
+#     # print(recepies);
+#     recepies = jsonify(recepies)
+#     # print("_____________________________________________________");
+#     # print("______________________________________________________");
+#     # print(recepies);
+#     # recepies = json.dumps(recepies);
+#     cur.close()
+#     return recepies;
 
 
 
@@ -232,13 +242,22 @@ def generate_shopping_list():
     data = request.get_json()
     return MealPrep.generate_shopping_list(data['dietitian_ID'], data['recipee_id'])
     
-@app.get('/MealPrep/getPatientMealPlanHistory')
-def get_patient_meal_plan_history():
-    # this funciton was not tested due to lack of data in the meal_prep table 
+
+@app.post('/MealPrep/insertMealPlanItem')
+def insertMealPlan():
     data = request.get_json()
-    return MealPrep.get_patient_meal_plan_history(data['patient_id'], data['dietitian_id'])
+    return MealPrepItem.addMealPrepItem(json.dumps(data))
 
+@app.post('/MealPrep/insertBulkMPItems')
+def insertBulkMPItems():
+    data = request.get_json()
+    return MealPrepItem.addbulkMealPrepItems(json.dumps(data))
 
+@app.get('/MealPrep/getCombination')
+def getCombination():
+    data = request.get_json()
+    mpComb = MpCombination.getCombination(data['diet_id'], data['patient_id'],data['combination_id'])
+    return mpComb.mpCombination_json();
 
 ########################## Ingredient Class
 @app.get('/Ingredient/details')
@@ -354,10 +373,60 @@ def getLastDiet():
         app.logger.error(f"Exception occurred: {e}")
         return jsonify({'status': 'failed', 'message': 'Something went wrong'}), 500
 
+@app.get('/diet/getDietCombinations')
+def getDietCombinations():
+    data = request.get_json()
+    mpCombs = Diet.getDietCombinations(data['diet_id'], data['patient_id'])
+    return mpCombs;
+
+############################ Recipee Class
+
+@app.get('/Recipee/getRecipee')
+def getRecipeeByID():
+    try:
+        data = request.get_json()
+        recipee_id = data.get('recipee_id')
+
+        if not recipee_id:
+            return jsonify({'status': 'failed', 'message': 'recipee_id is required'}), 400
+
+        recipee = Recipee.getRecipee(recipee_id)
+        
+        if recipee is None:
+            return jsonify({'status': 'success', 'message': 'No recipees found for the given recipee ID'}), 200
+
+        return recipee, 200
+
+    except ValueError as ve:
+        return jsonify({'status': 'failed', 'message': str(ve)}), 400
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return jsonify({'status': 'failed', 'message': 'Something went wrong'}), 500
 
 
 
 
+
+
+
+########################## Swagger Documentation
+
+# Config Swagger UI
+SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI
+API_URL = '/static/swagger.json'  # Our API url
+
+# Call factory function to create our blueprint
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={  # Swagger UI config overrides
+        'app_name': "AGOGO"
+    }
+)
+
+# Register blueprint at URL
+CORS(app)
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
         
 
 

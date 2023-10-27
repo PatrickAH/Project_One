@@ -9,6 +9,8 @@ import json
 from Db_connection import Db_connection
 import psycopg2
 
+from MpCombination import MpCombination
+
 class Diet:
     def __init__(self, diet_id, patient_id, start_date, end_date, calories_intake, fat_intake, carbs_intake, protein_intake, meals_nbr):
         self.diet_id = diet_id
@@ -31,7 +33,8 @@ class Diet:
         
         try:
             query = '''INSERT INTO public.diet (patient_id, start_date, end_date, calories_intake, fat_intake, carbs_intake, protein_intake, meals_nbr) 
-                       VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING diet_id'''
+                       VALUES (%s, TO_DATE(%s,'DD/MM/YYYY'), TO_DATE(%s,'DD/MM/YYYY'), %s, %s, %s, %s, %s) RETURNING diet_id'''
+            print(query)
             cur.execute(query, (dietData["patient_id"], dietData["start_date"], dietData["end_date"], dietData["calories_intake"], 
                                 dietData["fat_intake"], dietData["carbs_intake"], dietData["protein_intake"], dietData["meals_nbr"]))
             diet_id = cur.fetchone()[0]
@@ -145,4 +148,38 @@ class Diet:
         finally:
             if cur:
                 cur.close()
-    
+
+
+    @staticmethod
+    def getDietCombinations(diet_id,patient_id):
+        # cur = Db_connection.getConnection().cursor()
+        cur2 = Db_connection.getConnection().cursor()
+
+        try: 
+            # query = '''select r.recipee_id, r.name, r.description, r.meal_type, r.calories, r.fat, r.protein, r.servings, r.carbs,mp.combinationnbr
+            #             from meal_prep mp ,recipee r 
+            #             where mp.recipee_id = r.recipee_id 
+            #             and mp.patient_id =%s
+            #             and diet_id = %s
+            #             order by combinationnbr '''
+            # cur.execute(query, (patient_id,diet_id))
+            # records = cur.fetchall()
+            maxQ = '''select DISTINCT(mp.combinationnbr)
+                        from meal_prep mp ,recipee r 
+                        where mp.recipee_id = r.recipee_id 
+                        and mp.patient_id =%s
+                        and diet_id = %s'''
+            cur2.execute(maxQ,(patient_id,diet_id))
+            nbr_comb = cur2.fetchall()
+            combinations = []
+            for i in nbr_comb:
+                combination = MpCombination.getCombination(diet_id,patient_id,i[0])
+                combinations.append(combination.mpCombination_json())
+
+            return combinations
+        except psycopg2.Error as e:
+            return f"Database error: {e}"
+        finally:
+            if cur2:
+                # cur.close()
+                cur2.close()
