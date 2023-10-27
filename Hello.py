@@ -32,8 +32,12 @@ def getDietitian():
         data = request.get_json()
         return Dietitian.fetchDietitian(data['dietitian_email'],data['dietitian_pwd']);
     except:
-        raise BadRequest('Something went wrong, please contact the system provider');
-    
+         raise BadRequest('Something went wrong, please contact the system provider');
+
+@app.get('/dietitian/getDietitians')
+def getAllDietitians():
+    return Dietitian.getDietitians();
+
 @app.get('/dietitian/patients')
 def fetDietitianPatients():
     try:
@@ -57,6 +61,21 @@ def deactivatePatient():
 def activatePatient():
     data = request.get_json()
     return Dietitian.activatePatient(data['patient_ID']);
+
+@app.post('/dietitian/addDietitian')
+def addDietitian():
+    data = request.get_json()
+    return Dietitian.addDietitian(json.dumps(data));
+
+@app.put('/dietitian/updateDietitian')
+def updateDietitian():
+    data = request.get_json()
+    return Dietitian.updateDietitian(json.dumps(data));
+
+@app.delete('/dietitian/deleteDietitian')
+def deleteDietitian():
+    data = json.loads(json.dumps(request.get_json()))
+    return Dietitian.removeDietitian(data['dietitian_id']);
 
 #END OF DIETITIAN CLASS.
 

@@ -48,6 +48,29 @@
         }
       }
     },
+    "/dietitian/getDietitians": {
+      "get": {
+        "tags": ["Dietitian API"],
+        "summary": "Get List of system Dietitians",
+        "description": "Get List of system Dietitians.",
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "Type":"array",
+              "items":{
+              "$ref": "#/definitions/Dietitian"
+              }
+            }
+          },
+          "400": {
+            "description": "Error."
+          }
+        }
+      }
+    },
     "/dietitian/patients": {
       "get": {
         "tags": ["Dietitian API"],
@@ -166,6 +189,78 @@
                    "type": "String"
                  }
                }
+          }
+        }
+      }
+    },
+    "/dietitian/addDietitian": {
+      "post": {
+        "tags": ["Dietitian API"],
+        "summary": "Create a Dietitian",
+        "description": "Create a new Dietitian",
+        "parameters": [
+          {
+            "name": "patientDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+               "$ref": "#/definitions/DietitianCreation"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dietitian added successfully with ID: {dietitian_id}"
+          }
+        }
+      }
+    },
+    "/dietitian/updateDietitian": {
+      "put": {
+        "tags": ["Dietitian API"],
+        "summary": "Update a Dietitian",
+        "description": "Update a Dietitian",
+        "parameters": [
+          {
+            "name": "patientDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+               "$ref": "#/definitions/DietitianUPD"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "dietitian with ID: {dietitian_id} updated successfully."
+          }
+        }
+      }
+    },
+    "/dietitian/deleteDietitian": {
+      "delete": {
+        "tags": ["Dietitian API"],
+        "summary": "Update a Dietitian",
+        "description": "Update a Dietitian",
+        "parameters": [
+          {
+            "name": "Dietitian Id",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dietitian_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+          
+        ],
+        "responses": {
+          "200": {
+            "description": "dietitian with ID: {dietitian_id} deleted successfully."
           }
         }
       }
@@ -1801,28 +1896,92 @@
     "Dietitian": {
       "type": "object",
       "properties": {
-        "dietitianID": {
+        "dietitian_id": {
           "type": "string",
           "description": "ID of the Dietitian."
-        },
-        "Fname": {
+        }, 
+        "first_name": {
           "type": "string",
           "description": "First name of the Dietitian."
         },
-        "Lname": {
+        "family_name": {
           "type": "string",
           "description": "Last name of the Dietitian."
         },
-        "DOB": {
+        "date_of_birth": {
           "type": "string",
           "format": "date",
           "description": "Date of birth of the Dietitian."
         },
-        "phone": {
+        "phone_number": {
           "type": "string",
           "description": "Phone number of the Dietitian."
         },
         "email": {
+          "type": "string",
+          "description": "Email address of the Dietitian."
+        }
+             }
+    },
+    "DietitianCreation": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "description": "First name of the Dietitian."
+        },
+        "family_name": {
+          "type": "string",
+          "description": "Last name of the Dietitian."
+        },
+        "date_of_birth": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of birth of the Dietitian."
+        },
+        "phone_number": {
+          "type": "string",
+          "description": "Phone number of the Dietitian."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the Dietitian."
+        },
+        "pwd": {
+          "type": "string",
+          "description": "Email address of the Dietitian."
+        }
+             }
+    },
+    "DietitianUPD": {
+      "type": "object",
+      "properties": {
+        "dietitian_id": {
+          "type": "string",
+          "description": "ID of the Dietitian."
+        }, 
+        "first_name": {
+          "type": "string",
+          "description": "First name of the Dietitian."
+        },
+        "family_name": {
+          "type": "string",
+          "description": "Last name of the Dietitian."
+        },
+        "date_of_birth": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of birth of the Dietitian."
+        },
+        "phone_number": {
+          "type": "string",
+          "description": "Phone number of the Dietitian."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the Dietitian."
+        },
+        "pwd": {
           "type": "string",
           "description": "Email address of the Dietitian."
         }
