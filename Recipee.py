@@ -20,6 +20,12 @@ class Recipee:
         json_recipee = json.dumps(vars(self))
         return json_recipee
     
+    @staticmethod
+    def transformJsonToRecipee(jsonRecipee):
+        recip = Recipee(jsonRecipee['recipee_id'],jsonRecipee['name'],jsonRecipee['description'],jsonRecipee['meal_type'] ,jsonRecipee['calories'] ,
+                         jsonRecipee['fat'],jsonRecipee['protein'] ,jsonRecipee['servings'] ,jsonRecipee['carbs'] )
+
+        return recip
                   
     @staticmethod
     def getRecipee(recipee_id):

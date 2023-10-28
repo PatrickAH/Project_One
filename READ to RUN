@@ -3,6 +3,7 @@
 3- pip install Flask
 4- export FLASK_APP=Hello.py
 5- flask run
+5- FOR WINDOWS: python -m flask run
 
 
 For more info:

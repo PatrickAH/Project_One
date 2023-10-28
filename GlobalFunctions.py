@@ -39,3 +39,4 @@ class GlobalFunctions:
         
         query = query1 + " VALUES " + query2
         return query
+

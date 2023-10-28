@@ -6,6 +6,8 @@ from Db_connection import Db_connection
 from Dietitian import Dietitian
 from HealthHist import HealthHist
 from LifeStyle import LifeStyle
+from MealPrepItem import MealPrepItem
+from MpCombination import MpCombination
 from Patient import Patient
 from Anthropometry import Anthropometry
 from MealPrep import MealPrep
@@ -30,8 +32,12 @@ def getDietitian():
         data = request.get_json()
         return Dietitian.fetchDietitian(data['dietitian_email'],data['dietitian_pwd']);
     except:
-        raise BadRequest('Something went wrong, please contact the system provider');
-    
+         raise BadRequest('Something went wrong, please contact the system provider');
+
+@app.get('/dietitian/getDietitians')
+def getAllDietitians():
+    return Dietitian.getDietitians();
+
 @app.get('/dietitian/patients')
 def fetDietitianPatients():
     try:
@@ -55,6 +61,21 @@ def deactivatePatient():
 def activatePatient():
     data = request.get_json()
     return Dietitian.activatePatient(data['patient_ID']);
+
+@app.post('/dietitian/addDietitian')
+def addDietitian():
+    data = request.get_json()
+    return Dietitian.addDietitian(json.dumps(data));
+
+@app.put('/dietitian/updateDietitian')
+def updateDietitian():
+    data = request.get_json()
+    return Dietitian.updateDietitian(json.dumps(data));
+
+@app.delete('/dietitian/deleteDietitian')
+def deleteDietitian():
+    data = json.loads(json.dumps(request.get_json()))
+    return Dietitian.removeDietitian(data['dietitian_id']);
 
 #END OF DIETITIAN CLASS.
 
@@ -241,7 +262,21 @@ def generate_shopping_list():
     return MealPrep.generate_shopping_list(data['dietitian_ID'], data['recipee_id'])
     
 
+@app.post('/MealPrep/insertMealPlanItem')
+def insertMealPlan():
+    data = request.get_json()
+    return MealPrepItem.addMealPrepItem(json.dumps(data))
 
+@app.post('/MealPrep/insertBulkMPItems')
+def insertBulkMPItems():
+    data = request.get_json()
+    return MealPrepItem.addbulkMealPrepItems(json.dumps(data))
+
+@app.get('/MealPrep/getCombination')
+def getCombination():
+    data = request.get_json()
+    mpComb = MpCombination.getCombination(data['diet_id'], data['patient_id'],data['combination_id'])
+    return mpComb.mpCombination_json();
 
 ########################## Ingredient Class
 @app.get('/Ingredient/details')
@@ -357,7 +392,11 @@ def getLastDiet():
         app.logger.error(f"Exception occurred: {e}")
         return jsonify({'status': 'failed', 'message': 'Something went wrong'}), 500
 
-
+@app.get('/diet/getDietCombinations')
+def getDietCombinations():
+    data = request.get_json()
+    mpCombs = Diet.getDietCombinations(data['diet_id'], data['patient_id'])
+    return mpCombs;
 
 ############################ Recipee Class
 

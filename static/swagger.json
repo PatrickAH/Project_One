@@ -48,6 +48,29 @@
         }
       }
     },
+    "/dietitian/getDietitians": {
+      "get": {
+        "tags": ["Dietitian API"],
+        "summary": "Get List of system Dietitians",
+        "description": "Get List of system Dietitians.",
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "Type":"array",
+              "items":{
+              "$ref": "#/definitions/Dietitian"
+              }
+            }
+          },
+          "400": {
+            "description": "Error."
+          }
+        }
+      }
+    },
     "/dietitian/patients": {
       "get": {
         "tags": ["Dietitian API"],
@@ -166,6 +189,78 @@
                    "type": "String"
                  }
                }
+          }
+        }
+      }
+    },
+    "/dietitian/addDietitian": {
+      "post": {
+        "tags": ["Dietitian API"],
+        "summary": "Create a Dietitian",
+        "description": "Create a new Dietitian",
+        "parameters": [
+          {
+            "name": "patientDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+               "$ref": "#/definitions/DietitianCreation"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dietitian added successfully with ID: {dietitian_id}"
+          }
+        }
+      }
+    },
+    "/dietitian/updateDietitian": {
+      "put": {
+        "tags": ["Dietitian API"],
+        "summary": "Update a Dietitian",
+        "description": "Update a Dietitian",
+        "parameters": [
+          {
+            "name": "patientDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+               "$ref": "#/definitions/DietitianUPD"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "dietitian with ID: {dietitian_id} updated successfully."
+          }
+        }
+      }
+    },
+    "/dietitian/deleteDietitian": {
+      "delete": {
+        "tags": ["Dietitian API"],
+        "summary": "Update a Dietitian",
+        "description": "Update a Dietitian",
+        "parameters": [
+          {
+            "name": "Dietitian Id",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dietitian_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+          
+        ],
+        "responses": {
+          "200": {
+            "description": "dietitian with ID: {dietitian_id} deleted successfully."
           }
         }
       }
@@ -303,6 +398,140 @@
         }
       }
     }, 
+    "/MealPrep/insertMealPlanItem": {
+      "post": {
+        "tags": ["Meal Plan Item API"],
+        "summary": "Adds a Meal Plan Item to the DB",
+        "description": "Adds a Meal Plan Item to the DB",
+        "parameters": [
+          {
+            "name": "mealPlanDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+                "$ref": "#/definitions/MealPrepItem"
+              }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "meal prep item added successfully"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    }, 
+    "/MealPrep/insertBulkMPItems": {
+      "post": {
+        "tags": ["Meal Plan Item API"],
+        "summary": "Adds several Meal Plan Items to the DB in one call",
+        "description": "Adds several Meal Plan Items to the DB in one call",
+        "parameters": [
+          {
+            "name": "insert_bulk_MP_Items",
+            "in": "body",
+            "required": true,
+            "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/MealPrepItem"
+                }
+              }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "meal prep items added successfully"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    }, 
+    "/MealPrep/getCombination": {
+      "get": {
+        "tags": ["Meal Plan Item API"],
+        "summary": "gets a specific saved combination based on the patient, diet, and combination ID",
+        "description": "gets a specific saved combination based on the patient, diet, and combination ID",
+        "parameters": [
+          {
+            "name": "mealPlanDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "diet_id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "patient_id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "combination_id": {
+                  "type": "integer",
+                  "format": "int64"
+                }}
+              }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Combination"
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/diet/getDietCombinations": {
+      "get": {
+        "tags": ["Meal Plan Item API"],
+        "summary": "gets a all saved  combinations based on the patient and diet",
+        "description": "gets a all saved  combinations based on the patient and diet",
+        "parameters": [
+          {
+            "name": "mealPlanDetails",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "diet_id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "patient_id": {
+                  "type": "integer",
+                  "format": "int64"
+                }}
+              }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+                "type": "array",
+                "items": {
+                "$ref": "#/definitions/Combination"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
     "/Recipee/getRecipee": {
       "get": {
         "tags": ["Recipee API"],
@@ -1667,28 +1896,92 @@
     "Dietitian": {
       "type": "object",
       "properties": {
-        "dietitianID": {
+        "dietitian_id": {
           "type": "string",
           "description": "ID of the Dietitian."
-        },
-        "Fname": {
+        }, 
+        "first_name": {
           "type": "string",
           "description": "First name of the Dietitian."
         },
-        "Lname": {
+        "family_name": {
           "type": "string",
           "description": "Last name of the Dietitian."
         },
-        "DOB": {
+        "date_of_birth": {
           "type": "string",
           "format": "date",
           "description": "Date of birth of the Dietitian."
         },
-        "phone": {
+        "phone_number": {
           "type": "string",
           "description": "Phone number of the Dietitian."
         },
         "email": {
+          "type": "string",
+          "description": "Email address of the Dietitian."
+        }
+             }
+    },
+    "DietitianCreation": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "description": "First name of the Dietitian."
+        },
+        "family_name": {
+          "type": "string",
+          "description": "Last name of the Dietitian."
+        },
+        "date_of_birth": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of birth of the Dietitian."
+        },
+        "phone_number": {
+          "type": "string",
+          "description": "Phone number of the Dietitian."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the Dietitian."
+        },
+        "pwd": {
+          "type": "string",
+          "description": "Email address of the Dietitian."
+        }
+             }
+    },
+    "DietitianUPD": {
+      "type": "object",
+      "properties": {
+        "dietitian_id": {
+          "type": "string",
+          "description": "ID of the Dietitian."
+        }, 
+        "first_name": {
+          "type": "string",
+          "description": "First name of the Dietitian."
+        },
+        "family_name": {
+          "type": "string",
+          "description": "Last name of the Dietitian."
+        },
+        "date_of_birth": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of birth of the Dietitian."
+        },
+        "phone_number": {
+          "type": "string",
+          "description": "Phone number of the Dietitian."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the Dietitian."
+        },
+        "pwd": {
           "type": "string",
           "description": "Email address of the Dietitian."
         }
@@ -1753,8 +2046,46 @@
         "description": "score of the combination."
       }
   }
-}
-  ,
+}  ,
+"MealPrepItem": {
+  "type": "object",
+  "properties": {
+    "diet_id": {
+      "type": "number"
+    },
+    "recipee_id": {
+      "type": "number"
+    },
+    "meal_type": {
+      "type": "string"
+    },
+    "patient_id": {
+      "type": "number"
+    },
+    "diet_start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "combinationnbr": {
+      "type": "number"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "servings": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "diet_id",
+    "recipee_id",
+    "meal_type",
+    "patient_id",
+    "diet_start_date",
+    "combinationnbr"
+  ]
+},
   "GenMealPrep":{
     "type": "object",
     "properties": {
@@ -1802,9 +2133,6 @@
             "large": {
               "type": "number"
             }
-
-
-
         }
       }
       }
