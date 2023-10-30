@@ -25,7 +25,7 @@ class Anthropometry:
 
     def Anthropometry_json(self):
         return json.dumps(vars(self),default=str);
-
+#
     @staticmethod
     def fetchPatientAnthropometryList(p_ID):
         cur = Db_connection.getConnection().cursor()
