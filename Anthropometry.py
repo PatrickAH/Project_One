@@ -22,10 +22,10 @@ class Anthropometry:
         self.subscapular_skinfold=subscapular_skinfold
         self.suprailiac_skinfold=suprailiac_skinfold
         self.triceps_skinfold=triceps_skinfold
-#ZZE
+
     def Anthropometry_json(self):
         return json.dumps(vars(self),default=str);
-
+#
     @staticmethod
     def fetchPatientAnthropometryList(p_ID):
         cur = Db_connection.getConnection().cursor()
