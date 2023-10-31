@@ -244,7 +244,7 @@ def addLifeStyle():
 ########################## Generate Meal Plan
 
 # should it be get??
-@app.get('/MealPrep/generateMealPlan')
+@app.post('/MealPrep/generateMealPlan')
 def generate_meal_plan_LSM():
     data = request.get_json()
     meal_plan = MealPrep.generate_meal_plan_LSM(data['dietitian_ID'], data['protein_goal'], data['carbs_goal'], data['fat_goal'], data['nbr_days'])

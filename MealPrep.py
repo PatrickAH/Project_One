@@ -114,10 +114,11 @@ class MealPrep:
    
         # Sort the combinations based on LSM score in ascending order
         all_combinations.sort(key=lambda x: x["score"])
+        nbr_days = int(nbr_days)
         best_combinations = all_combinations[:nbr_days]
         cur.close()
         return json.dumps({"best_combinations": best_combinations}, default=lambda x: float(x) if isinstance(x, Decimal) else x)
-    
+
 
 
     
